@@ -1,0 +1,10 @@
+name: timezone-ntp-config
+title: Timezone and NTP Configuration Test
+maintainer: Your Name
+copyright: Your Organization
+copyright_email: you@example.com
+license: Apache-2.0
+summary: InSpec profile to verify timezone and NTP server configuration
+version: 0.1.0
+supports:
+  - platform-family: linux
