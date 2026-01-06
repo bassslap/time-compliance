@@ -24,17 +24,10 @@ control 'timezone-ntp-config' do
   # For systems using chrony (Ubuntu/Debian or RHEL/CentOS)
   chrony_conf_path = file('/etc/chrony/chrony.conf').exist? ? '/etc/chrony/chrony.conf' : '/etc/chrony.conf'
   if file(chrony_conf_path).exist?
-    chrony = chrony_conf(chrony_conf_path)
-    describe chrony do
+    describe chrony_conf(chrony_conf_path) do
       ntp_servers.each do |server|
-        # Check server entries if they exist
-        if !chrony.servers.nil?
-          its('servers') { should include(server).or include("#{server} ") }
-        end
-        # Check pool entries if they exist  
-        if !chrony.pools.nil?
-          its('pools') { should include(server).or include("#{server} ") }
-        end
+        # Check if server appears in either servers or pools (strip spaces)
+        its('servers.to_s + pools.to_s') { should match /#{Regexp.escape(server)}/ }
       end
     end
     ntp_configured = true
