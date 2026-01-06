@@ -19,6 +19,7 @@ control 'timezone-ntp-config' do
 
   # Check NTP servers configuration
   ntp_servers = attribute('ntp_servers', value: ['0.pool.ntp.org', '1.pool.ntp.org'])
+  ntp_configured = false
   
   # For systems using chrony
   if file('/etc/chrony.conf').exist?
@@ -28,19 +29,21 @@ control 'timezone-ntp-config' do
         its('pool') { should include server }
       end
     end
+    ntp_configured = true
   end
 
   # For systems using ntp
-  if file('/etc/ntp.conf').exist?
+  if !ntp_configured && file('/etc/ntp.conf').exist?
     describe ntp_conf do
       ntp_servers.each do |server|
         its('server') { should include server }
       end
     end
+    ntp_configured = true
   end
 
-  # For systems using systemd-timesyncd
-  if file('/etc/systemd/timesyncd.conf').exist?
+  # For systems using systemd-timesyncd (only if chrony/ntp not configured)
+  if !ntp_configured && file('/etc/systemd/timesyncd.conf').exist?
     describe file('/etc/systemd/timesyncd.conf') do
       ntp_servers.each do |server|
         its('content') { should match /#{Regexp.escape(server)}/ }
