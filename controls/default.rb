@@ -18,7 +18,7 @@ control 'timezone-ntp-config' do
   end
 
   # Check NTP servers configuration
-  ntp_servers = attribute('ntp_servers', default: ['0.pool.ntp.org', '1.pool.ntp.org'])
+  ntp_servers = attribute('ntp_servers', value: ['0.pool.ntp.org', '1.pool.ntp.org'])
   
   # For systems using chrony
   if file('/etc/chrony.conf').exist?
