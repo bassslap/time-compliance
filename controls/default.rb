@@ -21,8 +21,8 @@ control 'timezone-ntp-config' do
   ntp_servers = attribute('ntp_servers', value: ['0.pool.ntp.org', '1.pool.ntp.org'])
   ntp_configured = false
   
-  # For systems using chrony
-  if file('/etc/chrony.conf').exist?
+  # For systems using chrony (Ubuntu/Debian or RHEL/CentOS)
+  if file('/etc/chrony/chrony.conf').exist? || file('/etc/chrony.conf').exist?
     describe chrony_conf do
       ntp_servers.each do |server|
         its('server') { should include server }
